@@ -1,0 +1,42 @@
+<div class="type-list-container">
+  <div class="header">
+    <h1>Listado de Types</h1>
+    <div class="search-container">
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Buscar por type"
+        [(ngModel)]="filtro"
+        (keyup)="aplicarFiltro()"
+      />
+      <button class="search-button" (click)="aplicarFiltro()">
+        🔍
+      </button>
+    </div>
+
+    <button mat-raised-button color="primary" routerLink="/types/nuevo">Nuevo Type</button>
+  </div>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let type">{{ type.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="type">
+      <th mat-header-cell *matHeaderCellDef>Type</th>
+      <td mat-cell *matCellDef="let type">{{ type.type }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="acciones">
+      <th mat-header-cell *matHeaderCellDef>Acciones</th>
+      <td mat-cell *matCellDef="let type">
+        <button mat-button color="accent" [routerLink]="['/types/editar', type.id]">Editar</button>
+        <button mat-button color="warn" (click)="eliminarType(type.id)">Eliminar</button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator [pageSize]="5"></mat-paginator>
+</div>

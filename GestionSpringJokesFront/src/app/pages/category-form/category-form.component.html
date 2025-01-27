@@ -1,0 +1,16 @@
+<div class="category-form-container">
+  <h1>{{ isEditMode ? 'Editar Category' : 'Nueva Category' }}</h1>
+  <form [formGroup]="categoryForm" (ngSubmit)="guardarCategory()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Category</mat-label>
+      <input matInput formControlName="category" />
+      <mat-error *ngIf="categoryForm.get('category')?.invalid">La category es obligatoria.</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="categoryForm.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button mat-button color="warn" routerLink="/categories">Cancelar</button>
+  </form>
+</div>

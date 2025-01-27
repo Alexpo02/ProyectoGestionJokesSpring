@@ -1,0 +1,16 @@
+<div class="type-form-container">
+  <h1>{{ isEditMode ? 'Editar Type' : 'Nuevo Type' }}</h1>
+  <form [formGroup]="typeForm" (ngSubmit)="guardarType()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Type</mat-label>
+      <input matInput formControlName="type" />
+      <mat-error *ngIf="typeForm.get('type')?.invalid">El type es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="typeForm.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button mat-button color="warn" routerLink="/types">Cancelar</button>
+  </form>
+</div>

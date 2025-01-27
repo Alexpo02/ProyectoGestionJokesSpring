@@ -1,0 +1,66 @@
+<div class="joke-form-container">
+  <h1>{{ isEditMode ? 'Editar Joke' : 'Nueva Joke' }}</h1>
+  <form [formGroup]="jokeForm" (ngSubmit)="guardarJoke()">
+    <!-- Dropdown para Categoría -->
+    <mat-form-field appearance="fill">
+      <mat-label>Categoría</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{ category.category }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="jokeForm.get('category')?.invalid">La categoría es obligatoria.</mat-error>
+    </mat-form-field>
+
+    <!-- Dropdown para Idioma -->
+    <mat-form-field appearance="fill">
+      <mat-label>Idioma</mat-label>
+      <mat-select formControlName="language">
+        <mat-option *ngFor="let language of languages" [value]="language">
+          {{ language.language }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="jokeForm.get('language')?.invalid">El idioma es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <!-- Dropdown para Tipo -->
+    <mat-form-field appearance="fill">
+      <mat-label>Tipo</mat-label>
+      <mat-select formControlName="type">
+        <mat-option *ngFor="let type of types" [value]="type">
+          {{ type.type }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="jokeForm.get('type')?.invalid">El tipo es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <!-- Campo de texto para Text1 -->
+    <mat-form-field appearance="fill">
+      <mat-label>Texto 1</mat-label>
+      <textarea matInput formControlName="text1"></textarea>
+      <mat-error *ngIf="jokeForm.get('text1')?.invalid">El texto 1 es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <!-- Campo de texto para Text2 -->
+    <mat-form-field appearance="fill">
+      <mat-label>Texto 2</mat-label>
+      <textarea matInput formControlName="text2"></textarea>
+      <mat-error *ngIf="jokeForm.get('text2')?.invalid">El texto 2 es obligatorio.</mat-error>
+    </mat-form-field>
+
+    <!-- Dropdown para Flags -->
+    <mat-form-field appearance="fill">
+      <mat-label>Flags</mat-label>
+      <mat-select formControlName="flagses" multiple>
+        <mat-option *ngFor="let flag of flags" [value]="flag">
+          {{ flag.flag }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="jokeForm.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button mat-button color="warn" routerLink="/jokes">Cancelar</button>
+  </form>
+</div>

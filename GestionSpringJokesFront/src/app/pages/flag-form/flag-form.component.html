@@ -1,0 +1,16 @@
+<div class="flag-form-container">
+  <h1>{{ isEditMode ? 'Editar Flag' : 'Nueva Flag' }}</h1>
+  <form [formGroup]="flagForm" (ngSubmit)="guardarFlag()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Flag</mat-label>
+      <input matInput formControlName="flag" />
+      <mat-error *ngIf="flagForm.get('flag')?.invalid">La flag es obligatoria.</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="flagForm.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button mat-button color="warn" routerLink="/flags">Cancelar</button>
+  </form>
+</div>

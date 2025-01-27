@@ -1,0 +1,22 @@
+<div class="language-form-container">
+  <h1>{{ isEditMode ? 'Editar Langauge' : 'Nuevo Language' }}</h1>
+  <form [formGroup]="languageForm" (ngSubmit)="guardarLanguage()">
+
+    <mat-form-field appearance="fill">
+      <mat-label>Code</mat-label>
+      <input matInput formControlName="code" />
+      <mat-error *ngIf="languageForm.get('code')?.invalid">El code es obligatoria.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill">
+      <mat-label>Language</mat-label>
+      <input matInput formControlName="language" />
+      <mat-error *ngIf="languageForm.get('language')?.invalid">El language es obligatoria.</mat-error>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="languageForm.invalid">
+      {{ isEditMode ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button mat-button color="warn" routerLink="/languages">Cancelar</button>
+  </form>
+</div>
