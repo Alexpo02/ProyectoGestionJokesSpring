@@ -2,8 +2,18 @@ package com.alex.springboot.backend.jokes.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "primera_vez")
@@ -26,6 +36,10 @@ public class PrimeraVez implements Serializable {
     @OneToOne
     @JoinColumn(name = "idjoke", referencedColumnName = "id", nullable = true)
     private Jokes joke;
+    
+    @OneToMany(mappedBy = "primeraVez", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Telefonos> telefonos;
+
 
     // Constructor vacío (obligatorio para JPA)
     public PrimeraVez() {}
@@ -38,7 +52,15 @@ public class PrimeraVez implements Serializable {
         this.joke = joke;
     }
 
-    // Getters y setters
+    public List<Telefonos> getTelefonos() {
+		return telefonos;
+	}
+
+	public void setTelefonos(List<Telefonos> telefonos) {
+		this.telefonos = telefonos;
+	}
+
+	// Getters y setters
     public Integer getId() {
         return id;
     }

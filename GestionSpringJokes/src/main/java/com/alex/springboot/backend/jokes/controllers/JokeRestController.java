@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alex.springboot.backend.jokes.dto.JokeDTO;
 import com.alex.springboot.backend.jokes.entity.Jokes;
 import com.alex.springboot.backend.jokes.entity.PrimeraVez;
+import com.alex.springboot.backend.jokes.entity.Telefonos;
 import com.alex.springboot.backend.jokes.services.IJokeService;
 
 
@@ -173,5 +174,97 @@ public class JokeRestController {
 		return null;
 		
 	}
+	
+	
+	
+	// Obtener una primera vez junto con los teléfonos asociados
+    @GetMapping("/primera_vez/{id}")
+    public ResponseEntity<?> getPrimeraVezWithTelefonos(@PathVariable Integer id) {
+        PrimeraVez primeraVez = jokeService.findPrimeraVezByJokeId(id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (primeraVez == null) {
+            response.put("mensaje", "La primera vez de la broma ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        List<Telefonos> telefonos = jokeService.findTelefonosByPrimeraVezId(primeraVez.getId());
+        response.put("primera_vez", primeraVez);
+        response.put("telefonos", telefonos);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Eliminar primera vez y los teléfonos asociados
+    @DeleteMapping("/primera_vez/{id}")
+    public ResponseEntity<?> deletePrimeraVez(@PathVariable Integer id) {
+        PrimeraVez primeraVez = jokeService.findPrimeraVezByJokeId(id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (primeraVez == null) {
+            response.put("mensaje", "La primera vez ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            // Eliminar los teléfonos asociados
+            List<Telefonos> telefonos = jokeService.findTelefonosByPrimeraVezId(primeraVez.getId());
+            for (Telefonos telefono : telefonos) {
+                jokeService.deleteTelefonoById(telefono.getId());
+            }
+            // Eliminar la entrada de PrimeraVez
+            jokeService.deletePrimeraVezById(primeraVez.getId());
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al eliminar la primera vez y los teléfonos asociados");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("mensaje", "La primera vez y los teléfonos han sido eliminados con éxito");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // Modificar tanto la primera vez como sus teléfonos asociados
+    @PutMapping("/primera_vez/{id}")
+    public ResponseEntity<?> editarPrimeraVez(@RequestBody PrimeraVez primeraVez, @PathVariable Integer id) {
+        PrimeraVez primeraVezActual = jokeService.findPrimeraVezByJokeId(id);
+        Map<String, Object> response = new HashMap<>();
+
+        if (primeraVezActual == null) {
+            response.put("mensaje", "La primera vez ID: ".concat(id.toString()).concat(" no existe en la base de datos!"));
+            return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try {
+            // Actualizar los datos de PrimeraVez
+            primeraVezActual.setPrograma(primeraVez.getPrograma());
+            primeraVezActual.setFechaEmision(primeraVez.getFechaEmision());
+            jokeService.savePrimeraVez(primeraVezActual);
+
+            // Ahora, se actualizan los teléfonos asociados
+            // Si se necesita actualizar la lista de teléfonos, se puede eliminar primero los existentes y agregar los nuevos
+            List<Telefonos> telefonosActualizados = primeraVez.getTelefonos();  // Los teléfonos vienen del cuerpo de la petición
+
+            // Eliminar los teléfonos antiguos (si se requiere)
+            List<Telefonos> telefonosExistentes = jokeService.findTelefonosByPrimeraVezId(primeraVezActual.getId());
+            for (Telefonos telefono : telefonosExistentes) {
+                jokeService.deleteTelefonoById(telefono.getId());
+            }
+
+            // Agregar los nuevos teléfonos
+            for (Telefonos telefono : telefonosActualizados) {
+                telefono.setPrimeraVez(primeraVezActual);  // Asegurarse de que el teléfono se asocie correctamente con la "PrimeraVez"
+                jokeService.saveTelefono(telefono);  // Guardar o actualizar el teléfono
+            }
+
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al actualizar la primera vez y sus teléfonos");
+            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("mensaje", "La primera vez y los teléfonos han sido actualizados con éxito");
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
 
 }
